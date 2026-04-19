@@ -10,6 +10,7 @@ import { NATS_SERVICE, envs } from 'src/config';
         transport: Transport.NATS,
         options: {
           servers: envs.natsServers,
+          name: 'client-gateway',
         },
       },
     ]),

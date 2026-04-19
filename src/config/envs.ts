@@ -38,11 +38,10 @@ const getCorsOrigins = (corsOrigin: string[]): string[] => {
   const origins: string[] = [];
 
   corsOrigin.forEach((domain) => {
-    // Add HTTP and HTTPS for each domain
+
     origins.push(`http://${domain}`);
     origins.push(`https://${domain}`);
 
-    // Add common development ports (except when an explicit port is already present)
     if (!isProd && !domain.includes(':')) {
       origins.push(`http://${domain}:3000`);
       origins.push(`https://${domain}:3000`);
@@ -69,7 +68,6 @@ export const envs = {
     envVars.CORS_ENV === 'development'
       ? getCorsOrigins(envVars.CORS_ALLOW_IPS)
       : envVars.CORS_ALLOW_IPS,
-  // corsAllowedOrigin: [...new Set([...corsAllowedOriginDomains, ...corsAllowedOriginIPs])],
   // NATS configuration
   natsServers: envVars.NATS_SERVERS,
 };

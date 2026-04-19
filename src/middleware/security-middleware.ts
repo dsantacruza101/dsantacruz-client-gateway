@@ -50,7 +50,7 @@ export class SecurityMiddleware implements NestMiddleware {
     const isDomainAllowed = this.allowedDomains.includes(origin);
 
     if (!isIpAllowed && !isDomainAllowed) {
-      // El log ahora te mostrará tu IP real 172.21.8.183 en lugar de la 172.23.0.1
+      // El log ahora te mostrará tu IP real
       this.logger.warn(`🚫 Acceso Denegado: IP=${clientIp}, Origin=${origin || 'N/A'}`);
       throw new ForbiddenException('No tienes permiso para acceder a este recurso.');
     }

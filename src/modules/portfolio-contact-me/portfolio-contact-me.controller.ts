@@ -3,7 +3,6 @@ import {
   Post, 
   Body, 
   Inject, 
-  Req 
 } from '@nestjs/common';
 import { 
   ClientProxy, 
@@ -23,15 +22,14 @@ export class PortfolioContactMeController {
 
   @Post('contact-me')
   async sendRegistroRREE(
-    @Req() req: Request,
     @Body() contactMeMessage: PortfolioContactMeDto,
   ) {
     const payload = {
       ...contactMeMessage,
     };
-
+    
     const registroRREE = await firstValueFrom(
-      this.client.send('put_enviar_registro', payload).pipe(
+      this.client.send('mail.send', payload).pipe(
         catchError((err) => {
           return throwError(() => new RpcException(err.message));
         }),

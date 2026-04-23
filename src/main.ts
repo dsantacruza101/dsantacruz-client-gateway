@@ -19,6 +19,12 @@ async function bootstrap() {
   app.use(
     helmet({
       hsts: { maxAge: 31536000, includeSubDomains: true },
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'none'"],
+          connectSrc: ["'self'"],
+        },
+      },
     }),
   );
 
@@ -84,11 +90,9 @@ async function bootstrap() {
     methods: 'GET, POST',
     allowedHeaders: [
       'Content-Type',
-      'Authorization',
       'X-Requested-With',
-      'x-api-id',
     ],
-    credentials: true,
+    credentials: false,
     maxAge: 86400,
   });
 

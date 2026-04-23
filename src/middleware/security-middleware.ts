@@ -12,17 +12,11 @@ export class SecurityMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
 
-    // Si estamos en desarrollo y la petición es local, saltamos la validación
-    // Opcional: Solo si quieres total libertad en local
     if (this.isDevelopment === 'development') {
         return next();
     }
 
-    // 1. Ver qué headers están llegando (Depuración total)
-    // Esto imprimirá en la consola de Docker todos los headers que Nginx inyecta
-    console.log('Headers recibidos en Nest:', req.headers);
-
-    // 2. Intentar obtenerlo de varias fuentes comunes
+    // Intentar obtenerlo de varias fuentes comunes
     const xForwardedFor = req.headers['x-forwarded-for'] as string;
     const xRealIp = req.headers['x-real-ip'] as string;
 

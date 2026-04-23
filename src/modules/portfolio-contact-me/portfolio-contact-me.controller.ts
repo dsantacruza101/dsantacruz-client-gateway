@@ -1,18 +1,19 @@
-import { 
-  Controller, 
-  Post, 
-  Body, 
-  Inject, 
+import {
+  Controller,
+  Post,
+  Body,
+  Inject,
 } from '@nestjs/common';
-import { 
-  ClientProxy, 
-  RpcException 
+import {
+  ClientProxy,
+  RpcException
 } from '@nestjs/microservices';
-import { 
-  catchError, 
-  firstValueFrom, 
-  throwError 
+import {
+  catchError,
+  firstValueFrom,
+  throwError
 } from 'rxjs';
+import { Throttle } from '@nestjs/throttler';
 import { NATS_SERVICE } from 'src/config';
 import { PortfolioContactMeDto } from './dto/portfolio-contact-me.dto';
 
@@ -20,6 +21,7 @@ import { PortfolioContactMeDto } from './dto/portfolio-contact-me.dto';
 export class PortfolioContactMeController {
   constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
 
+  @Throttle({ contact: { limit: 3, ttl: 60000 } })
   @Post('contact-me')
   async sendRegistroRREE(
     @Body() contactMeMessage: PortfolioContactMeDto,

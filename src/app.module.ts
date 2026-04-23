@@ -12,7 +12,11 @@ import { SecurityMiddleware } from './middleware/security-middleware';
         name: 'default',
         ttl: 1000,
         limit: 5,
-        // blockDuration: 5000,
+      },
+      {
+        name: 'contact',
+        ttl: 60000,
+        limit: 3,
       },
     ]),
     PortfolioContactMeModule, 

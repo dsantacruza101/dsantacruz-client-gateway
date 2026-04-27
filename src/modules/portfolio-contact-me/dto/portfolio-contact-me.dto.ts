@@ -34,4 +34,9 @@ export class PortfolioContactMeDto {
   @MaxLength(2000)
   @Type(() => String)
   message!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Type(() => String)
+  captchaToken!: string;
 }

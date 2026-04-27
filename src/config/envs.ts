@@ -7,6 +7,7 @@ interface EnvVars {
   CORS_ALLOW_DOMAINS: string[];
   CORS_ALLOW_IPS: string[];
   CORS_ENV: string;
+  HCAPTCHA_SECRET: string;
 }
 
 const envsSchema = joi
@@ -16,6 +17,7 @@ const envsSchema = joi
     CORS_ALLOW_DOMAINS: joi.array().items(joi.string()).required(),
     CORS_ALLOW_IPS: joi.array().items(joi.string()).required(),
     CORS_ENV: joi.string().required(),
+    HCAPTCHA_SECRET: joi.string().required(),
   })
   .unknown(true);
 
@@ -70,4 +72,6 @@ export const envs = {
       : envVars.CORS_ALLOW_IPS,
   // NATS configuration
   natsServers: envVars.NATS_SERVERS,
+  // hCaptcha
+  hcaptchaSecret: envVars.HCAPTCHA_SECRET,
 };

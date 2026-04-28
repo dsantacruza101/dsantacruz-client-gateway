@@ -1,5 +1,4 @@
-# Dependencias
-FROM node:21-alpine3.19 AS deps
+FROM node:21-alpine3.19
 
 WORKDIR /usr/src/app
 
@@ -8,33 +7,8 @@ COPY package-lock.json ./
 
 RUN npm install
 
-
-# Builder - Construye la aplicación
-FROM node:21-alpine3.19 AS build
-
-WORKDIR /usr/src/app
-
-COPY --from=deps /usr/src/app/node_modules ./node_modules
-
 COPY . .
-
-RUN npm run build
-
-RUN npm ci -f --only=production && npm cache clean --force
-
-
-# Imagen final de producción
-FROM node:21-alpine3.19 AS prod
-
-WORKDIR /usr/src/app
-
-COPY --from=build /usr/src/app/node_modules ./node_modules
-COPY --from=build /usr/src/app/dist ./dist
-
-ENV NODE_ENV=production
-
-USER node
 
 EXPOSE 3000
 
-CMD [ "node", "dist/main.js" ]
+CMD [ "npm", "run", "start:dev" ]

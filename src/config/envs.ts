@@ -6,7 +6,6 @@ interface EnvVars {
   NATS_SERVERS: string[];
   NATS_TOKEN: string;
   CORS_ALLOW_DOMAINS: string[];
-  CORS_ALLOW_IPS: string[];
   CORS_ENV: string;
   HCAPTCHA_SECRET: string;
 }
@@ -17,7 +16,6 @@ const envsSchema = joi
     NATS_SERVERS: joi.array().items(joi.string()).required(),
     NATS_TOKEN: joi.string().required(),
     CORS_ALLOW_DOMAINS: joi.array().items(joi.string()).required(),
-    CORS_ALLOW_IPS: joi.array().items(joi.string()).required(),
     CORS_ENV: joi.string().required(),
     HCAPTCHA_SECRET: joi.string().required(),
   })
@@ -27,7 +25,6 @@ const { error, value } = envsSchema.validate({
   ...process.env,
   NATS_SERVERS: process.env.NATS_SERVERS?.split(','),
   CORS_ALLOW_DOMAINS: process.env.CORS_ALLOW_DOMAINS?.split(','),
-  CORS_ALLOW_IPS: process.env.CORS_ALLOW_IPS?.split(','),
 });
 
 if (error) {
@@ -68,10 +65,6 @@ export const envs = {
   corsEnv: envVars.CORS_ENV,
   // CORS configuration
   corsAllowedOriginDomains: getCorsOrigins(envVars.CORS_ALLOW_DOMAINS),
-  corsAllowedOriginIPs:
-    envVars.CORS_ENV === 'development'
-      ? getCorsOrigins(envVars.CORS_ALLOW_IPS)
-      : envVars.CORS_ALLOW_IPS,
   // NATS configuration
   natsServers: envVars.NATS_SERVERS,
   natsToken: envVars.NATS_TOKEN,

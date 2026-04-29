@@ -74,10 +74,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(new RpcCustomExceptionFilter());
 
-  const allowedOrigins = new Set([
-    ...envs.corsAllowedOriginDomains,
-    ...(envs.corsEnv === 'development' ? envs.corsAllowedOriginIPs : []),
-  ]);
+  const allowedOrigins = new Set(envs.corsAllowedOriginDomains);
 
   // CORS configuration
   app.enableCors({

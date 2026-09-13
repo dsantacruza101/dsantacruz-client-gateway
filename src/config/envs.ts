@@ -40,7 +40,6 @@ const getCorsOrigins = (corsOrigin: string[]): string[] => {
   const origins: string[] = [];
 
   corsOrigin.forEach((domain) => {
-
     origins.push(`http://${domain}`);
     origins.push(`https://${domain}`);
 

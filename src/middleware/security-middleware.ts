@@ -1,19 +1,22 @@
-import { ForbiddenException, Injectable, Logger, NestMiddleware } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NestMiddleware,
+} from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { envs } from 'src/config';
 
 @Injectable()
 export class SecurityMiddleware implements NestMiddleware {
-
   private readonly logger = new Logger('SecurityMiddleware');
   private readonly allowedIps = envs.corsAllowedOriginIPs;
   private readonly allowedDomains = envs.corsAllowedOriginDomains;
   private readonly isDevelopment = envs.corsEnv;
 
   use(req: Request, res: Response, next: NextFunction) {
-
     if (this.isDevelopment === 'development') {
-        return next();
+      return next();
     }
 
     // Intentar obtenerlo de varias fuentes comunes
@@ -45,8 +48,12 @@ export class SecurityMiddleware implements NestMiddleware {
 
     if (!isIpAllowed && !isDomainAllowed) {
       // El log ahora te mostrará tu IP real
-      this.logger.warn(`🚫 Acceso Denegado: IP=${clientIp}, Origin=${origin || 'N/A'}`);
-      throw new ForbiddenException('No tienes permiso para acceder a este recurso.');
+      this.logger.warn(
+        `🚫 Acceso Denegado: IP=${clientIp}, Origin=${origin || 'N/A'}`,
+      );
+      throw new ForbiddenException(
+        'No tienes permiso para acceder a este recurso.',
+      );
     }
 
     next();

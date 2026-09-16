@@ -13,11 +13,20 @@ also needs a downstream `mail`-pattern microservice to fully succeed. See
 ## 1. Check `.env`
 
 The app fails to boot (Joi validation error) without these vars set:
-`PORT`, `NATS_SERVERS`, `CORS_ALLOW_DOMAINS`, `CORS_ALLOW_IPS`, `CORS_ENV`, `HCAPTCHA_SECRET`.
+`PORT`, `NATS_SERVERS`, `NATS_TOKEN`, `CORS_ALLOW_DOMAINS`, `CORS_ENV`, `HCAPTCHA_SECRET`.
 
 A `.env` already exists in this repo for local dev (`PORT=3000`,
 `NATS_SERVERS=nats://localhost:4222`, `CORS_ENV=development`). If it's missing, stop and
-ask the user for values rather than inventing secrets (especially `HCAPTCHA_SECRET`).
+ask the user for values rather than inventing secrets (especially `HCAPTCHA_SECRET` and
+`NATS_TOKEN`).
+
+**As of the 2026-09-16 merge from `main`, `NATS_TOKEN` is a newly-required var.** The
+old `CORS_ALLOW_IPS` var is gone from validation (harmless to leave in `.env`, just
+unused). If `.env` still predates that merge, it's missing `NATS_TOKEN` and the app
+**will not boot** — check for this specifically before assuming something else is wrong.
+For local dev this can be any placeholder string (e.g. `NATS_TOKEN=local-dev`) since the
+local broker config (`nats-server.conf`, step 2 below) doesn't actually enforce it — just
+don't invent a real-looking secret and don't touch it if a real value is already there.
 
 With `CORS_ENV=development`, `SecurityMiddleware`'s IP/domain allowlist is bypassed, so
 local requests from any origin/IP are allowed through (CORS itself still applies for
@@ -38,7 +47,9 @@ docker run -d --name nats-server -p 4222:4222 -p 8222:8222 nats
 ```
 
 (A `nats-server.conf` exists in the repo root for a more tuned config, but the plain
-`nats` image above is what the README documents and is sufficient for local dev.)
+`nats` image above is what the README documents and is sufficient for local dev. Note:
+that config has no `authorization` block, so it accepts connections regardless of
+`NATS_TOKEN` — the app will connect fine even with a placeholder token locally.)
 
 If a container named `nats-server` already exists but is stopped: `docker start nats-server`
 instead of creating a new one.

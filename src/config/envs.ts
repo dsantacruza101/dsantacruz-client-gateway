@@ -11,7 +11,7 @@ interface EnvVars {
 }
 
 const envsSchema = joi
-  .object({
+  .object<EnvVars>({
     PORT: joi.number().required(),
     NATS_SERVERS: joi.array().items(joi.string()).required(),
     NATS_TOKEN: joi.string().required(),
@@ -25,7 +25,7 @@ const { error, value } = envsSchema.validate({
   ...process.env,
   NATS_SERVERS: process.env.NATS_SERVERS?.split(','),
   CORS_ALLOW_DOMAINS: process.env.CORS_ALLOW_DOMAINS?.split(','),
-});
+}) as { error?: joi.ValidationError; value: EnvVars };
 
 if (error) {
   throw new Error(`Config validation errors: ${error.message}`);

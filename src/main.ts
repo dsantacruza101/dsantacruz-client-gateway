@@ -1,5 +1,6 @@
 import { BadRequestException, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { Response } from 'express';
 import * as express from 'express';
 import helmet from 'helmet';
@@ -10,10 +11,12 @@ import { RpcCustomExceptionFilter } from './common/exceptions/rpc-custom-excepti
 
 async function bootstrap() {
   const logger = new Logger('Main-Gateway');
-  const app = await NestFactory.create(AppModule, { bodyParser: false });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bodyParser: false,
+  });
 
   // Network / proxy configuration
-  app.getHttpAdapter().getInstance().set('trust proxy', 1);
+  app.set('trust proxy', 1);
 
   // Security headers (Helmet)
   app.use(
@@ -78,7 +81,10 @@ async function bootstrap() {
 
   // CORS configuration
   app.enableCors({
-    origin: (origin, callback) => {
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) => {
       if (!origin || allowedOrigins.has(origin)) {
         return callback(null, true);
       }
@@ -93,4 +99,4 @@ async function bootstrap() {
   await app.listen(envs.port);
   logger.log(`Gateway running and ready`);
 }
-bootstrap();
+void bootstrap();

@@ -14,12 +14,15 @@ export class PortfolioContactMeController {
   @UseGuards(HCaptchaGuard)
   @Post('contact-me')
   async sendRegistroRREE(@Body() contactMeMessage: PortfolioContactMeDto) {
-    const { captchaToken: _captchaToken, ...payload } = contactMeMessage;
+    const { name, email, subject, message } = contactMeMessage;
+    const payload = { name, email, subject, message };
 
     const registroRREE = await firstValueFrom(
-      this.client.send('mail.send', payload).pipe(
-        catchError((err) => {
-          return throwError(() => new RpcException(err.message));
+      this.client.send<unknown>('mail.send', payload).pipe(
+        catchError((err: unknown) => {
+          const errorMessage =
+            err instanceof Error ? err.message : 'Unknown error';
+          return throwError(() => new RpcException(errorMessage));
         }),
       ),
     );

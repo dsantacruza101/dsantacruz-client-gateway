@@ -6,15 +6,27 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request } from 'express';
+import type { ParamsDictionary } from 'express-serve-static-core';
 import { envs } from 'src/config';
+
+interface HCaptchaRequestBody {
+  captchaToken?: string;
+}
+
+interface HCaptchaVerifyResponse {
+  success: boolean;
+  'error-codes'?: string[];
+}
 
 @Injectable()
 export class HCaptchaGuard implements CanActivate {
   private readonly logger = new Logger(HCaptchaGuard.name);
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req = context.switchToHttp().getRequest<Request>();
-    const token: string | undefined = req.body?.captchaToken;
+    const req = context
+      .switchToHttp()
+      .getRequest<Request<ParamsDictionary, any, HCaptchaRequestBody>>();
+    const token = req.body?.captchaToken;
 
     if (!token) {
       throw new ForbiddenException('Captcha token is required');
@@ -28,14 +40,14 @@ export class HCaptchaGuard implements CanActivate {
     const clientIp = this.extractIp(req);
     if (clientIp) params.append('remoteip', clientIp);
 
-    let data: { success: boolean; 'error-codes'?: string[] };
+    let data: HCaptchaVerifyResponse;
 
     try {
       const res = await fetch('https://api.hcaptcha.com/siteverify', {
         method: 'POST',
         body: params,
       });
-      data = await res.json();
+      data = (await res.json()) as HCaptchaVerifyResponse;
     } catch (err) {
       this.logger.error('hCaptcha network error', err);
       throw new ForbiddenException('Captcha verification unavailable');

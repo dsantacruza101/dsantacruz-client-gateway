@@ -1,8 +1,10 @@
 import { BadRequestException, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { Response } from 'express';
 import * as express from 'express';
 import helmet from 'helmet';
+import type { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 import { AppModule } from './app.module';
 import { envs } from './config';
@@ -10,7 +12,9 @@ import { RpcCustomExceptionFilter } from './common/exceptions/rpc-custom-excepti
 
 async function bootstrap() {
   const logger = new Logger('Main-Gateway');
-  const app = await NestFactory.create(AppModule, { bodyParser: false });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bodyParser: false,
+  });
 
   // Network / proxy configuration
   app.getHttpAdapter().getInstance().set('trust proxy', 1);
@@ -77,7 +81,7 @@ async function bootstrap() {
   const allowedOrigins = new Set(envs.corsAllowedOriginDomains);
 
   // CORS configuration
-  app.enableCors({
+  const corsOptions: CorsOptions = {
     origin: (origin, callback) => {
       if (!origin || allowedOrigins.has(origin)) {
         return callback(null, true);
@@ -91,7 +95,8 @@ async function bootstrap() {
     ],
     credentials: false,
     maxAge: 86400,
-  });
+  };
+  app.enableCors(corsOptions);
 
   await app.listen(envs.port);
   logger.log(`Gateway running and ready`);

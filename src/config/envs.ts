@@ -25,7 +25,7 @@ const { error, value } = envsSchema.validate({
   ...process.env,
   NATS_SERVERS: process.env.NATS_SERVERS?.split(','),
   CORS_ALLOW_DOMAINS: process.env.CORS_ALLOW_DOMAINS?.split(','),
-});
+}) as { error: joi.ValidationError | undefined; value: EnvVars };
 
 if (error) {
   throw new Error(`Config validation errors: ${error.message}`);

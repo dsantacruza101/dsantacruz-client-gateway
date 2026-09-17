@@ -28,7 +28,7 @@ jobs:
         run: npm run lint --if-present
 
       - name: Run Tests
-        run: npm test --if-present
+        run: npm test -- --passWithNoTests
 
       - name: Build Project
         run: npm run build

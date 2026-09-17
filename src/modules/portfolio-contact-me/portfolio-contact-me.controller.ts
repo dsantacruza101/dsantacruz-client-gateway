@@ -30,11 +30,13 @@ export class PortfolioContactMeController {
     @Body() contactMeMessage: PortfolioContactMeDto,
   ) {
     const { captchaToken: _captchaToken, ...payload } = contactMeMessage;
+    void _captchaToken;
 
     const registroRREE = await firstValueFrom(
-      this.client.send('mail.send', payload).pipe(
-        catchError((err) => {
-          return throwError(() => new RpcException(err.message));
+      this.client.send<unknown>('mail.send', payload).pipe(
+        catchError((err: unknown) => {
+          const message = err instanceof Error ? err.message : 'Unknown error';
+          return throwError(() => new RpcException(message));
         }),
       ),
     );

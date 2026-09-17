@@ -6,10 +6,16 @@ import {
   Logger
 } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
-import { 
-  EMPTY_RESPONSE_REGEX, 
-  VALID_HTTP_STATUSES 
+import { Request, Response } from 'express';
+import {
+  EMPTY_RESPONSE_REGEX,
+  VALID_HTTP_STATUSES
 } from '../constants/rpc-exception.constants';
+
+interface RpcErrorShape {
+  status?: unknown;
+  message?: unknown;
+}
 
 @Catch(RpcException)
 export class RpcCustomExceptionFilter implements ExceptionFilter {
@@ -23,8 +29,8 @@ export class RpcCustomExceptionFilter implements ExceptionFilter {
     }
 
     const ctx = host.switchToHttp();
-    const request = ctx.getRequest();
-    const response = ctx.getResponse();
+    const request = ctx.getRequest<Request>();
+    const response = ctx.getResponse<Response>();
     const rpcError = exception.getError();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -39,7 +45,7 @@ export class RpcCustomExceptionFilter implements ExceptionFilter {
         message = rpcError;
       }
     } else if (typeof rpcError === 'object' && rpcError !== null) {
-      const errObj = rpcError as Record<string, any>;
+      const errObj = rpcError as RpcErrorShape;
 
       const rawStatus = errObj.status;
       status = typeof rawStatus === 'number' && VALID_HTTP_STATUSES.has(rawStatus)

@@ -49,7 +49,7 @@ jobs:
 
       - name: Health Check
         run: |
-          sleep 30
+          sleep 180
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://api.dsantacruz.com/api/portfolio/contact-me)
           if [ "$STATUS" = "403" ] || [ "$STATUS" = "200" ]; then
             echo "✅ Backend respondiendo con status $STATUS"

@@ -1,19 +1,6 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Inject,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ClientProxy,
-  RpcException
-} from '@nestjs/microservices';
-import {
-  catchError,
-  firstValueFrom,
-  throwError
-} from 'rxjs';
+import { Controller, Post, Body, Inject, UseGuards } from '@nestjs/common';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { catchError, firstValueFrom, throwError } from 'rxjs';
 import { Throttle } from '@nestjs/throttler';
 import { NATS_SERVICE } from 'src/config';
 import { HCaptchaGuard } from 'src/common/guards/hcaptcha.guard';
@@ -26,9 +13,7 @@ export class PortfolioContactMeController {
   @Throttle({ contact: { limit: 3, ttl: 60000 } })
   @UseGuards(HCaptchaGuard)
   @Post('contact-me')
-  async sendRegistroRREE(
-    @Body() contactMeMessage: PortfolioContactMeDto,
-  ) {
+  async sendRegistroRREE(@Body() contactMeMessage: PortfolioContactMeDto) {
     const { captchaToken: _captchaToken, ...payload } = contactMeMessage;
     void _captchaToken;
 

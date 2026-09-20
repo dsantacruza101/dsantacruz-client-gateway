@@ -54,7 +54,9 @@ export class HCaptchaGuard implements CanActivate {
     }
 
     if (!data.success) {
-      this.logger.warn(`hCaptcha rejected: ${JSON.stringify(data['error-codes'])}`);
+      this.logger.warn(
+        `hCaptcha rejected: ${JSON.stringify(data['error-codes'])}`,
+      );
       throw new ForbiddenException('Captcha verification failed');
     }
 

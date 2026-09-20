@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { NatsModule } from './transport/nats.module';
 import { PortfolioContactMeModule } from './modules/portfolio-contact-me/portfolio-contact-me.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
@@ -19,19 +24,21 @@ import { SecurityMiddleware } from './middleware/security-middleware';
         limit: 3,
       },
     ]),
-    PortfolioContactMeModule, 
-    NatsModule
+    PortfolioContactMeModule,
+    NatsModule,
   ],
-  providers:[
+  providers: [
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
       
     },
-  ]
+  ],
 })
-export class AppModule implements NestModule{
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-      consumer.apply(SecurityMiddleware).forRoutes({ path: '*path', method: RequestMethod.ALL });
+    consumer
+      .apply(SecurityMiddleware)
+      .forRoutes({ path: '*path', method: RequestMethod.ALL });
   }
 }

@@ -3,13 +3,13 @@ import {
   ArgumentsHost,
   ExceptionFilter,
   HttpStatus,
-  Logger
+  Logger,
 } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { Request, Response } from 'express';
 import {
   EMPTY_RESPONSE_REGEX,
-  VALID_HTTP_STATUSES
+  VALID_HTTP_STATUSES,
 } from '../constants/rpc-exception.constants';
 
 interface RpcErrorShape {
@@ -19,7 +19,6 @@ interface RpcErrorShape {
 
 @Catch(RpcException)
 export class RpcCustomExceptionFilter implements ExceptionFilter {
-
   private readonly logger = new Logger(RpcCustomExceptionFilter.name);
 
   catch(exception: RpcException, host: ArgumentsHost) {
@@ -48,14 +47,18 @@ export class RpcCustomExceptionFilter implements ExceptionFilter {
       const errObj = rpcError as RpcErrorShape;
 
       const rawStatus = errObj.status;
-      status = typeof rawStatus === 'number' && VALID_HTTP_STATUSES.has(rawStatus)
-        ? rawStatus
-        : HttpStatus.BAD_REQUEST;
+      status =
+        typeof rawStatus === 'number' && VALID_HTTP_STATUSES.has(rawStatus)
+          ? rawStatus
+          : HttpStatus.BAD_REQUEST;
 
       const rawMessage = errObj.message;
       if (typeof rawMessage === 'string') {
         message = rawMessage;
-      } else if (Array.isArray(rawMessage) && rawMessage.every((m) => typeof m === 'string')) {
+      } else if (
+        Array.isArray(rawMessage) &&
+        rawMessage.every((m) => typeof m === 'string')
+      ) {
         message = rawMessage; // class-validator returns string[]
       }
     }

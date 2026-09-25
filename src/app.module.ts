@@ -31,7 +31,6 @@ import { SecurityMiddleware } from './middleware/security-middleware';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
-      
     },
   ],
 })

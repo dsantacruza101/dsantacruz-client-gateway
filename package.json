@@ -81,6 +81,7 @@
   },
   "overrides": {
     "glob": "^13.0.0",
-    "inflight": "npm:lru-cache@^10.4.3"
+    "inflight": "npm:lru-cache@^10.4.3",
+    "multer": "2.5.0"
   }
 }
